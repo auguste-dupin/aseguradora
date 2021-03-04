@@ -1,8 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 
 app = Flask(__name__)
 
-distance = 0.1
+class RegistrationForm(Form):
+    username = TextField('Username', [validators.Length(min=4, max=20)])
+    email = TextField('Email Address', [validators.Length(min=6, max=50)])
+    password = PasswordField('New Password', [
+        validators.Required(),
+        validators.EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Repeat Password')
+    accept_tos = BooleanField('I accept the Terms of Service and Privacy Notice (updated Jan 22, 2015)', [validators.Required()])
+    
+
 
 @app.route("/")
 def index():
@@ -24,10 +34,9 @@ def index():
 
 @app.route("/test")
 def show_pag1():
-    global distance
-    return render_template("pag1.html", distance=distance)
+    return render_template("pag1.html")
 
-@app.route("/main")
+@app.route("/main", methods=["GET","POST"])
 def main():
     return render_template("main.html")
 
